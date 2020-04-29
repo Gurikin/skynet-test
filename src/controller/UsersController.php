@@ -13,7 +13,7 @@ class UsersController extends AbstractController
      * @param int $serviceId
      * @throws Exception
      */
-    public function getTarifs(int $userId, int $serviceId)
+    public function getUsersServicesTarifs(int $userId, int $serviceId): void
     {
         $responseData = [];
 
@@ -26,23 +26,41 @@ class UsersController extends AbstractController
 
         $responseData['result'] = 'ok';
 
+        $responseData['tariffs'] = $this->wrapTariffs($queryResult);
+
+        $content = json_encode($responseData, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+
+        Response::send($content, Response::TYPE_JSON, Response::STATUS_OK);
+    }
+
+    public function putUsersServicesTarif(int $userId, int $serviceId, array $body)
+    {
+        $responseData['result'] = 'ok';
+
+        $content = json_encode($responseData, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+
+        Response::send($content, Response::TYPE_JSON, Response::STATUS_OK);
+    }
+
+    /**
+     * @param array $inputData
+     * @return array
+     * @throws Exception
+     */
+    private function wrapTariffs(array $inputData): array
+    {
         $tariffs = [];
 
-        foreach ($queryResult as $item) {
+        foreach ($inputData as $item) {
             $tariffs['title'] = TariffModel::GROUPS[$item['tarif_group_id']];
             unset($item['tarif_group_id']);
             $tariffs['link'] = $item['link'];
             unset($item['link']);
             $tariffs['speed'] = $item['speed'];
-            $currentDate = (new DateTime())->format('Y-m-d') . ' 00:00:00';
-            $item['new_payday'] = (new DateTime($currentDate . '+' . $item['pay_period'] . ' months'))->format('UO');
+            $item['new_payday'] = DateTimeUtil::getDateFromCurrentMidNight($item['pay_period'])->format('UO');
             $tariffs['tariffs'][] = $item;
         }
 
-        $responseData['tariffs'] = $tariffs;
-
-        $content = json_encode($responseData, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
-
-        Response::send($content, Response::TYPE_JSON, Response::STATUS_OK);
+        return $tariffs;
     }
 }
