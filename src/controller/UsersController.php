@@ -14,7 +14,7 @@ class UsersController extends AbstractController
      */
     public function getTarifs(int $userId, int $serviceId)
     {
-        $data = DBConnection::getInstance()->getConnection()->query('select * from tarifs')->fetchAll(PDO::FETCH_ASSOC);
+        $data = (new ServiceModel())->getUserServiceTarifGroup($userId, $serviceId);
         var_dump($data);
     }
 }
