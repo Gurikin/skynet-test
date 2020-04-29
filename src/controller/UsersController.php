@@ -14,7 +14,7 @@ class UsersController extends AbstractController
      */
     public function getTarifs(int $userId, int $serviceId)
     {
-        var_dump($userId, $serviceId);
-        die('Controller is work');
+        $data = (new ServiceModel())->getUserServiceTarifGroup($userId, $serviceId);
+        var_dump($data);
     }
 }

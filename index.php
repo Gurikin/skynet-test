@@ -1,6 +1,7 @@
 <?php
 
 include_once(__DIR__ . '/setup_project/setup_autoloader.php');
+include_once('db_cfg.php');
 
 /* Автозагрузчик классов */
 function myAutoload($class){
