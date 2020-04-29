@@ -23,7 +23,7 @@ class DBConnection
         $this->userName = $username;
         $this->userPassword = $password;
         $this->dns = 'mysql:dbname=' . $db . ';host=' . $server;
-        $this->connect();
+        $this->getConnection();
     }
 
     private function __clone()
@@ -31,22 +31,26 @@ class DBConnection
     }
 
     /**
-     * @return object $_instance - the instance of this class
+     * @return DBConnection
      */
-    public static function getConnection()
+    public static function getInstance(): DBConnection
     {
         if (!(self::$instance instanceof self)) {
             self::$instance = new self();
         }
-        return self::$instance->connection;
+        return self::$instance;
     }
 
-    private function connect(): void
+    /**
+     * @return PDO
+     */
+    public function getConnection(): PDO
     {
         try {
             $this->connection = new PDO($this->dns, $this->userName, $this->userPassword);
         } catch (PDOException $ex) {
-            echo 'Connection to the DB is fail: ' . $ex->getMessage();
+            throw $ex;
         }
+        return $this->connection;
     }
 }

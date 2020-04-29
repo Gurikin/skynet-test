@@ -14,7 +14,7 @@ class UsersController extends AbstractController
      */
     public function getTarifs(int $userId, int $serviceId)
     {
-        var_dump($userId, $serviceId);
-        die('Controller is work');
+        $data = DBConnection::getInstance()->getConnection()->query('select * from tarifs')->fetchAll(PDO::FETCH_ASSOC);
+        var_dump($data);
     }
 }
