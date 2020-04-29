@@ -13,3 +13,4 @@ session_start();
 
 /* Инициализация и запуск FrontController */
 $router = Router::getInstance();
+$router->route();
