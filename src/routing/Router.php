@@ -21,9 +21,13 @@ class Router
      */
     private function __construct()
     {
-        $this->parameters = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-        $this->controller = !empty($this->parameters[0]) ? ucfirst($this->parameters[0]) . 'Controller' : 'NotFoundController';
-        $this->action = mb_strtolower($_SERVER['REQUEST_METHOD']);
+        $urlParameters = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
+        $this->controller = !empty($urlParameters[0]) ? ucfirst($urlParameters[0]) . 'Controller' : 'NotFoundController';
+        $lastKey = count($urlParameters) - 1;
+        $this->action = mb_strtolower($_SERVER['REQUEST_METHOD']) . ucfirst($urlParameters[$lastKey]);
+        for ($i = 1; $i < count($urlParameters) - 1; $i += 2) {
+            $this->parameters[] = $urlParameters[$i];
+        }
     }
 
     private function __clone() { }
@@ -51,21 +55,18 @@ class Router
                 if ($rc->hasMethod($this->getAction())) {
                     $controller = $rc->newInstance();
                     $method = $rc->getMethod($this->getAction());
-                    if (!empty($this->_params)) {
-                        $method->invokeArgs($controller, $this->_params);
+                    if (!empty($this->getParameters())) {
+                        $method->invokeArgs($controller, $this->getParameters());
                     } else {
                         $method->invoke($controller);
                     }
                 } else {
-                    //TODO add the 404 redirection
                     throw new \RuntimeException('Action not found');
                 }
             } else {
-                //TODO add the 404 redirection
                 throw new \RuntimeException('Controller must implement IController interface');
             }
         } else {
-            //TODO add the 404 redirection
             throw new \RuntimeException('Controller not found');
         }
     }
@@ -73,7 +74,7 @@ class Router
     /**
      * @return string
      */
-    public function getController(): string
+    private function getController(): string
     {
         return $this->controller;
     }
@@ -81,7 +82,7 @@ class Router
     /**
      * @return string
      */
-    public function getAction(): string
+    private function getAction(): string
     {
         return $this->action;
     }
@@ -89,7 +90,7 @@ class Router
     /**
      * @return array
      */
-    public function getParameters(): array
+    private function getParameters(): array
     {
         return $this->parameters;
     }
