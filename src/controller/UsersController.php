@@ -17,7 +17,7 @@ class UsersController extends AbstractController
     {
         $responseData = [];
 
-        $queryResult = (new ServiceModel())->getUserServiceTarifGroup($userId, $serviceId);
+        $queryResult = (new ServiceModel())->getServiceTariffGroup($serviceId);
         if (!count($queryResult)) {
             $content = json_encode(['result' => 'not_found']);
             Response::send($content, Response::TYPE_JSON, Response::STATUS_OK);
@@ -35,8 +35,8 @@ class UsersController extends AbstractController
 
     public function putUsersServicesTarif(int $userId, int $serviceId, array $body = [])
     {
-        $responseData['result'] = 'ok';
-        $responseData['data'] = [$userId, $serviceId, $body];
+        $updateResult = (new ServiceModel())->setServiceTariff($serviceId, $body['tarif_id']);
+        $responseData['result'] = $updateResult ? 'ok' : 'error';
 
         $content = json_encode($responseData, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
 
@@ -58,7 +58,7 @@ class UsersController extends AbstractController
             $tariffs['link'] = $item['link'];
             unset($item['link']);
             $tariffs['speed'] = $item['speed'];
-            $item['new_payday'] = DateTimeUtil::getDateFromCurrentMidNight($item['pay_period'])->format('UO');
+            $item['new_payday'] = DateTimeUtil::getDateFromCurrentMidNight($item['pay_period'])->format(DateTimeUtil::TIMESTAMP_ZONE);
             $tariffs['tariffs'][] = $item;
         }
 

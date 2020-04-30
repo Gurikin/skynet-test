@@ -11,12 +11,12 @@ class DateTimeUtil
     public const DB_DATE = 'Y-m-d';
 
     /**
-     * @param string $period
+     * @param int $period
      * @return DateTime
      * @throws Exception
      */
-    public static function getDateFromCurrentMidNight(string $period): DateTime
+    public static function getDateFromCurrentMidNight(int $period): DateTime
     {
-        return (new DateTime('today midnight +' . $period));
+        return (new DateTime('today midnight +' . $period . ' month'));
     }
 }

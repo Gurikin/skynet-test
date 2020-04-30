@@ -5,10 +5,23 @@
  */
 
 
-class TariffModel
+class TariffModel extends BaseModel
 {
     public const GROUPS = [
         1 => 'Земля',
         2 => 'Вода'
     ];
+
+    /**
+     * @param int $tariffId
+     * @param array $variant
+     * @return array
+     */
+    public function getOneById(int $tariffId, array $variant = ['*'])
+    {
+        $select = implode(',', $variant);
+        $query = 'select ' . $select . ' from tarifs where id = ' . $tariffId;
+        $queryResult = $this->connection->query($query);
+        return $queryResult !== false ? $queryResult->fetch(PDO::FETCH_ASSOC) : [];
+    }
 }
