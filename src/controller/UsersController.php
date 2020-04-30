@@ -33,9 +33,10 @@ class UsersController extends AbstractController
         Response::send($content, Response::TYPE_JSON, Response::STATUS_OK);
     }
 
-    public function putUsersServicesTarif(int $userId, int $serviceId, array $body)
+    public function putUsersServicesTarif(int $userId, int $serviceId, array $body = [])
     {
         $responseData['result'] = 'ok';
+        $responseData['data'] = [$userId, $serviceId, $body];
 
         $content = json_encode($responseData, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
 
