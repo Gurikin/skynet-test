@@ -32,14 +32,35 @@ class ServiceModel extends BaseModel
      */
     public function setServiceTariff(int $serviceId, int $tariffId): bool
     {
-        $payPeriod = (new TariffModel())->getOneById($tariffId, ['pay_period']);
-        $newPayDay = DateTimeUtil::getDateFromCurrentMidNight('+' . $payPeriod['pay_period'] . ' months')->format(DateTimeUtil::DB_DATE);
+        //Доп. проверку на то, что устанавливаемый тариф входит в ту же группу, что и предшествующий тариф сервиса
+        $newTariff = (new TariffModel())->getOneById($tariffId, ['pay_period', 'id']);
+        $oldTariffs = array_column($this->getServiceTariffGroup($serviceId),'id');
+        if (!in_array($newTariff['id'], $oldTariffs, true)) {
+            return false;
+        }
+
+        $newPayDay = DateTimeUtil::getDateFromCurrentMidNight('+' . $newTariff['pay_period'] . ' months')->format(DateTimeUtil::DB_DATE);
+
         $query = 'update services set tarif_id = ?, payday = ? where id = ?';
         $queryResult = $this->connection->prepare($query);
         foreach ([$tariffId, $newPayDay, $serviceId] as $key => $value) {
             $queryResult->bindValue($key + 1, $value);
         }
         $queryResult->execute();
+
         return (bool)$queryResult->rowCount();
+    }
+
+    /**
+     * @param int $serviceId
+     * @param array $variant
+     * @return array
+     */
+    public function getOneById(int $serviceId, array $variant = ['*'])
+    {
+        $select = implode(',', $variant);
+        $query = 'select ' . $select . ' from services where id = ' . $serviceId;
+        $queryResult = $this->connection->query($query);
+        return $queryResult !== false ? $queryResult->fetch(PDO::FETCH_ASSOC) : [];
     }
 }
