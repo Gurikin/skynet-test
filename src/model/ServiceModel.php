@@ -32,7 +32,7 @@ class ServiceModel extends BaseModel
      */
     public function setServiceTariff(int $serviceId, int $tariffId): bool
     {
-        //Доп. проверку на то, что устанавливаемый тариф входит в ту же группу, что и предшествующий тариф сервиса
+        //Доп. проверка на то, что устанавливаемый тариф входит в ту же группу, что и предшествующий тариф сервиса
         $newTariff = (new TariffModel())->getOneById($tariffId, ['pay_period', 'id']);
         $oldTariffs = array_column($this->getServiceTariffGroup($serviceId),'id');
         if (!in_array($newTariff['id'], $oldTariffs, true)) {

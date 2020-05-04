@@ -9,6 +9,9 @@ class UsersController extends AbstractController
 {
 
     /**
+     * Мне кажется, что в рамках данного задания userId вообще не нужен, т.к. services.user_id & services.tarif_id
+     * однозначно определяются по primary key services.id. Сохранил этот параметр, только из-за жесткого указания
+     * строки запроса в ТЗ
      * @param int $userId
      * @param int $serviceId
      * @throws Exception
@@ -33,6 +36,15 @@ class UsersController extends AbstractController
         Response::send($content, Response::TYPE_JSON, Response::STATUS_OK);
     }
 
+    /**
+     * Мне кажется, что в рамках данного задания userId вообще не нужен, т.к. services.user_id & services.tarif_id
+     * однозначно определяются по primary key services.id. Сохранил этот параметр, только из-за жесткого указания
+     * строки запроса в ТЗ
+     * @param int $userId
+     * @param int $serviceId
+     * @param array $body
+     * @throws Exception
+     */
     public function putUsersServicesTarif(int $userId, int $serviceId, array $body = [])
     {
         $updateResult = (new ServiceModel())->setServiceTariff($serviceId, $body['tarif_id']);
@@ -54,12 +66,10 @@ class UsersController extends AbstractController
 
         foreach ($inputData as $item) {
             $tariffs['title'] = TariffModel::GROUPS[$item['tarif_group_id']];
-            unset($item['tarif_group_id']);
             $tariffs['link'] = $item['link'];
-            unset($item['link']);
             $tariffs['speed'] = $item['speed'];
             $item['new_payday'] = DateTimeUtil::getDateFromCurrentMidNight($item['pay_period'])->format(DateTimeUtil::TIMESTAMP_ZONE);
-            $tariffs['tariffs'][] = $item;
+            $tariffs['tariffs'][] = (new TariffModel())->getFromArray($item);
         }
 
         return $tariffs;

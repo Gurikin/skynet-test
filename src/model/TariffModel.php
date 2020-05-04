@@ -12,6 +12,19 @@ class TariffModel extends BaseModel
         3 => 'Вода'
     ];
 
+    /** @var int */
+    public $id;
+    /** @var string */
+    public $title;
+    /** @var float */
+    public $price;
+    /** @var int */
+    public $pay_period;
+    /** @var int */
+    public $speed;
+    /** @var string */
+    public $new_payday;
+
     /**
      * @param int $tariffId
      * @param array $variant
