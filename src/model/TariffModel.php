@@ -9,7 +9,7 @@ class TariffModel extends BaseModel
 {
     public const GROUPS = [
         1 => 'Земля',
-        2 => 'Вода'
+        3 => 'Вода'
     ];
 
     /**
