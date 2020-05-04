@@ -9,6 +9,9 @@ class UsersController extends AbstractController
 {
 
     /**
+     * Мне кажется, что в рамках данного задания userId вообще не нужен, т.к. services.user_id & services.tarif_id
+     * однозначно определяются по primary key services.id. Сохранил этот параметр, только из-за жесткого указания
+     * строки запроса в ТЗ
      * @param int $userId
      * @param int $serviceId
      * @throws Exception
@@ -34,6 +37,9 @@ class UsersController extends AbstractController
     }
 
     /**
+     * Мне кажется, что в рамках данного задания userId вообще не нужен, т.к. services.user_id & services.tarif_id
+     * однозначно определяются по primary key services.id. Сохранил этот параметр, только из-за жесткого указания
+     * строки запроса в ТЗ
      * @param int $userId
      * @param int $serviceId
      * @param array $body
